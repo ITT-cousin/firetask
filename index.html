@@ -3,90 +3,99 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>柴火互動範例（生動火焰版）</title>
+<title>柴火互動範例（自適應+輪播背景）</title>
 <style>
+  /* === 全域設定 === */
   body {
-    background-color: #000;
-    background-image: url('day.png');  /* 新增：背景圖片 */
-    background-size: contain;          /* 新增：背景依比例縮放 */
-    background-repeat: no-repeat;      /* 新增：背景不重複 */
-    background-position: center;       /* 新增：背景置中 */
+    background-color: #000;                     /* 黑色邊框底色 */
+    background-image: url('day1.png');          /* 初始背景 */
+    background-size: contain;                   /* 保持比例，四周留黑邊 */
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-attachment: fixed;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-end;                      /* 主體靠底部 */
     height: 100vh;
-    flex-direction: column;
     color: #fff;
     font-family: sans-serif;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+    transition: background-image 1s ease-in-out; /* 背景切換淡入效果 */
   }
 
+  /* === 柴火容器 === */
   .fire-container {
-    position: absolute;   /* 新增：絕對定位方便煙霧、文字、柴火綁定 */
-    bottom: 60px;         /* 新增：距離底部固定位置 */
-    left: 40%;
-    transform: translateX(-50%);
-    width: 250px;         /* 新增：柴火容器大小 */
+    position: absolute;
+    left: 50%;
+    bottom: 8.5vh;                                /* 底部距離視窗 */
+    transform: translateX(-95%);                /* 微微往左 */
+    width: 35vw;                                 /* 容器寬度依視窗比例 */
+    max-width: 200px;                            /* 桌機最大值 */
+    min-width: 100px;                            /* 手機最小值 */
+    text-align: center;
   }
 
+  /* === 柴火圖片 === */
   #fireImage {
-    width: 100%;          /* 新增：柴火隨容器大小調整 */  
-    height: auto;
+    width: 100%;         /* 🔹 隨容器縮放 */
+    height: auto;        /* 保持比例 */
     cursor: pointer;
-    transition: transform 0.3s ease;
+    transition: transform 0.2s ease;
     display: block;
+    margin: 0 auto;
   }
 
   #fireImage:active {
-    transform: scale(1.1); /* 新增：點擊柴火有縮放效果 */
+    transform: scale(1.1);  /* 點擊放大效果 */
   }
 
-  /* message 移到柴火容器內，跟柴火綁定 */
+  /* === 底部文字訊息 === */
   #message {
-    position: absolute;   /* 新增：絕對定位，相對 fire-container */
-    bottom: -50px;        /* 新增：距離柴火底部 */
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 1.2em;
+    position: relative;
+    margin-top: 0.1em;                       /* 🔹 靠近柴火 */
+    font-size: clamp(0.9em, 2.5vw, 1.2em);   /* 🔹 字體隨螢幕縮放 */
     text-align: center;
-    min-height: 1.5em;
-    width: max-content;
+    color: #fff;
+    white-space: nowrap;                      /* 🔹 禁止換行 */
   }
 
-  /* 煙霧元素 */
+  /* === 煙霧效果 === */
   #smoke {
     position: absolute;
-    width: 30%;           /* 新增：煙霧大小隨容器縮放 */
-    height: 30%;          /* 新增 */
-    top: 0;
+    width: 40%;         /* 🔹 相對於容器縮放 */
+    height: auto;
+    top: -15%;
     left: 50%;
     transform: translateX(-50%);
     pointer-events: none;
-    opacity: 0;           /* 新增：初始隱藏 */
-    background: url('smoke.png') no-repeat center/contain; /* 新增：煙霧圖片 */
+    opacity: 0;
+    background: url('smoke.png') no-repeat center/contain;
   }
 
-  .smoke-active {         /* 新增：柴火點燃時煙霧動畫 */
+  .smoke-active {
     opacity: 1;
     animation: smokeRise 3s linear infinite;
     animation-play-state: running;
   }
 
-  @keyframes smokeRise {  /* 新增：煙霧動畫 */
-    0% { transform: translate(-50%, -20px) scale(1); opacity: 0.2; }
-    50% { transform: translate(-50%, -80px) scale(1.3); opacity: 0.4; }
-    100% { transform: translate(-50%, -160px) scale(1.7); opacity: 0; } /* 飄得更高 */
+  @keyframes smokeRise {
+    0% { transform: translate(-50%, -10px) scale(1); opacity: 0.2; }
+    50% { transform: translate(-50%, -60px) scale(1.3); opacity: 0.4; }
+    100% { transform: translate(-50%, -120px) scale(1.7); opacity: 0; }
   }
 
-  /* 柴火講話框 */
+  /* === 柴火講話框 === */
   #fireDialog {
     position: absolute;
-    top: -50px;
-    right: -10px;
+    top: -60px;
+    right: 10px;
     background: rgba(255, 255, 255, 0.9);
     color: #000;
     padding: 6px 10px;
     border-radius: 8px;
-    font-size: 0.9em;
+    font-size: clamp(0.7em, 2vw, 1em);
     min-width: 80px;
     text-align: center;
     pointer-events: none;
@@ -104,28 +113,36 @@
     border-style: solid;
     border-color: rgba(255,255,255,0.9) transparent transparent transparent;
   }
+
+  /* === RWD 補強 === */
+  @media (max-width: 768px) {
+    .fire-container { width: 50vw; bottom: 6vh; }
+  }
+  @media (max-width: 480px) {
+    .fire-container { width: 65vw; }
+    #fireDialog { top: -50px; right: 0; }
+  }
 </style>
 </head>
 <body>
 
 <div class="fire-container" id="fireContainer">
-  <img src="wood.png" alt="柴火" id="fireImage"> <!-- 新增：柴火圖片 -->
-  <div id="smoke"></div>                        <!-- 新增：煙霧元素 -->
-  <div id="fireDialog"></div>                   <!-- 新增：柴火講話框 -->
-  <div id="message">天然無害的柴火</div>       <!-- 新增：文字綁定柴火 -->
+  <img src="wood.png" alt="柴火" id="fireImage">
+  <div id="smoke"></div>
+  <div id="fireDialog"></div>
+  <div id="message">天然無害的柴火</div>
 </div>
 
 <script>
   const fireImage = document.getElementById('fireImage');
-  const fireContainer = document.getElementById('fireContainer');
-  const message = document.getElementById('message');  // 新增：文字元素
-  const smoke = document.getElementById('smoke');      // 新增：煙霧元素
-  const fireDialog = document.getElementById('fireDialog'); // 新增：柴火講話框
+  const message = document.getElementById('message');
+  const smoke = document.getElementById('smoke');
+  const fireDialog = document.getElementById('fireDialog');
 
   const states = {
-    wood: 'wood.png',                // 原木柴
-    fireFrames: ['fire1.png','fire2.png'], // 燃燒動畫
-    burnt: 'burnt.png'               // 燒過的柴火
+    wood: 'wood.png',
+    fireFrames: ['fire1.png','fire2.png'],
+    burnt: 'burnt.png'
   };
 
   let state = 'wood';
@@ -134,61 +151,65 @@
   let fireIndex = 0;
   let fireInterval = null;
 
-  // 新增：打字機效果函數
+  // 打字機效果
   function typeWriter(element, text, speed=50) {
     element.textContent = '';
-    let i=0;
+    let i = 0;
     const interval = setInterval(() => {
       element.textContent += text[i];
       i++;
       if (i >= text.length) clearInterval(interval);
     }, speed);
     element.style.opacity = 1;
-    setTimeout(() => element.style.opacity = 0, text.length*speed + 1500);
+    setTimeout(() => element.style.opacity = 0, text.length * speed + 1500);
   }
 
+  // 點擊事件
   fireImage.addEventListener('click', () => {
     clickCount++;
+    if (clickCount === 1) typeWriter(fireDialog, '嗨！');
+    else if (clickCount === 5) typeWriter(fireDialog, '小力一點～');
+    else if (clickCount === 10) typeWriter(fireDialog, '我感覺不太對勁…');
 
-    // 新增：不同點擊次數顯示柴火對話
-    if(clickCount===1) typeWriter(fireDialog,'嗨！');
-    else if(clickCount===5) typeWriter(fireDialog,'小力一點～');
-    else if(clickCount===10) typeWriter(fireDialog,'我感覺不太對勁…');
-
-    // 柴火狀態邏輯
-    if(state==='wood'){
-      state='fire';
+    if (state === 'wood') {
+      state = 'fire';
       fireImage.src = states.fireFrames[0];
-      fireInterval = setInterval(()=>{
-        fireIndex = (fireIndex+1)%states.fireFrames.length;
+      fireInterval = setInterval(() => {
+        fireIndex = (fireIndex + 1) % states.fireFrames.length;
         fireImage.src = states.fireFrames[fireIndex];
-      },2000);
-      message.textContent='今天你點燃了柴火，使你充滿了決心🔥'; // 新增：文字顯示
-      smoke.classList.add('smoke-active');  // 新增：煙霧啟動
+      }, 2000);
+      message.textContent = '今天你點燃了柴火，使你充滿了決心🔥';
+      smoke.classList.add('smoke-active');
     }
-    else if(state==='fire'){
-      if(clickCount===14) message.textContent='火焰即將達到巔峰！🌟';
-      else if(clickCount>=maxClicks){
+    else if (state === 'fire') {
+      if (clickCount === 14) message.textContent = '火焰即將達到巔峰！🌟';
+      else if (clickCount >= maxClicks) {
         clearInterval(fireInterval);
-        fireInterval=null;
-        fireIndex=0;
-        fireImage.src=states.burnt;
-        message.textContent='火焰熄滅，周圍安靜了下來'; // 新增：文字顯示
-        smoke.classList.remove('smoke-active'); // 新增：停止煙霧
-        state='burnt';
-      }else{
-        message.textContent='火越來越旺！🔥🔥🔥'; // 新增：文字顯示
+        fireInterval = null;
+        fireImage.src = states.burnt;
+        message.textContent = '火焰熄滅，周圍安靜了下來';
+        smoke.classList.remove('smoke-active');
+        state = 'burnt';
+      } else {
+        message.textContent = '火越來越旺！🔥🔥🔥';
       }
     }
-    else if(state==='burnt'){
-      fireImage.src=states.wood;
-      message.textContent='柴火重新堆好'; // 新增：文字顯示
-      state='wood';
-      clickCount=0;
+    else if (state === 'burnt') {
+      fireImage.src = states.wood;
+      message.textContent = '柴火重新堆好';
+      state = 'wood';
+      clickCount = 0;
     }
   });
+
+  /* === 背景自動輪替 === */
+  const backgrounds = ['day1.png', 'day2.png', 'day3.png']; // 🔹 你的兩張背景
+  let bgIndex = 0;
+  setInterval(() => {
+    bgIndex = (bgIndex + 1) % backgrounds.length;
+    document.body.style.backgroundImage = `url('${backgrounds[bgIndex]}')`;
+  }, 5000); // 🔹 每 1 分鐘更換一次背景
 </script>
 
 </body>
 </html>
-
