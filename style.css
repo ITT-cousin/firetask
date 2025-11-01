@@ -1,0 +1,266 @@
+/* === 全域設定 === */
+body {
+  background-color: #000;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-attachment: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  height: 100vh;
+  color: #fff;
+  font-family: sans-serif;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  transition: background-image 1s ease-in-out;
+}
+
+/* === 柴火容器 === */
+.fire-container {
+  position: absolute;
+  bottom: 11.5vh;
+  transform: translateX(-50%);
+  left: 41%;
+  width: 35vw;
+  max-width: 200px;
+  min-width: 100px;
+  text-align: center;
+}
+
+/* 🔹 底部模糊陰影 */
+.shadow {
+  position: absolute;
+  bottom: 10%;
+  left: 48%;
+  transform: translateX(-50%);
+  width: 100%;
+  height: 100px;
+  background: rgba(77, 77, 77, 0.281);
+  border-radius: 70%;
+  filter: blur(5px);
+  z-index: -1;
+}
+
+/* === 主柴火圖片 === */
+#fireImage {
+  width: 100%;
+  height: auto;
+  cursor: pointer;
+  display: block;
+  z-index: 2;
+  position: relative;
+}
+.night-dark {
+  filter: brightness(0.2);
+  transition: filter 1s ease-in-out;
+}
+
+#fireImage:active {
+  transform: scale(1.2); /* 點擊時縮小一點 */
+  transition: transform 0.2s ease;
+}
+
+/* 🔹 火焰底下固定木柴 */
+#wood_1 {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  height: auto;
+  display: none;
+  z-index: 1;
+}
+
+/* 🔹 火焰動畫 */
+#fireFlame {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  height: auto;
+  z-index: 3;
+}
+
+/* === 煙霧效果 === */
+#smoke {
+  position: absolute;
+  width: 40%;
+  height: 40%;
+  top: -15%;
+  left: 50%;
+  transform: translateX(-50%);
+  pointer-events: none;
+  opacity: 0;
+  background: url('img/smoke.png') no-repeat center/contain;
+}
+.smoke-active {
+  opacity: 1;
+  animation: smokeRise 3s linear infinite;
+  animation-play-state: running;
+}
+@keyframes smokeRise {
+  0% { transform: translate(-50%, -10px) scale(1); opacity: 0.2; }
+  50% { transform: translate(-50%, -60px) scale(1.5); opacity: 0.4; }
+  100% { transform: translate(-50%, -120px) scale(2); opacity: 0; }
+}
+
+/* === 柴火講話框 === */
+#fireDialog {
+  position: absolute;
+  top: -60px;
+  right: 10px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #000;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: clamp(0.7em, 2vw, 1em);
+  min-width: 80px;
+  text-align: center;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s;
+  z-index: 10;
+}
+#fireDialog::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 20px;
+  border-width: 8px 8px 0 8px;
+  border-style: solid;
+  border-color: rgba(255,255,255,0.9) transparent transparent transparent;
+}
+
+/* 🔹 底部固定訊息 */
+#bottomMessage {
+  position: fixed;
+  bottom: 8vh;
+  width: 100%;
+  text-align: center;
+  font-size: 1.2rem;
+  color: #f4e8c1;
+  text-shadow: 0 0 10px rgba(0,0,0,0.6);
+  letter-spacing: 1px;
+  font-family: '微軟正黑體', sans-serif;
+  pointer-events: none;
+  transition: opacity 1s ease;
+  opacity: 1;
+  z-index: 50;
+}
+
+/* 🔹 前往河邊按鈕 */
+#goRiverBtn {
+  position: fixed;
+  top: 55vh;
+  left: 25%;
+  padding: 50px 30px;
+  background-color: transparent;
+  color: transparent;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  z-index: 60;
+  display: none;
+  transition: color 0.3s ease;
+  font-size: 1rem;
+}
+#goRiverBtn::after {
+  content: '前往河邊';
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: black;
+  background: rgba(255,255,255,0.8);
+  padding: 3px 6px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  opacity: 0;
+  white-space: nowrap;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+#goRiverBtn:hover::after { opacity: 1; }
+ 
+/* 🔹 前往帳棚按鈕 */
+#goTentBtn {
+  position: fixed;
+  top: 50%;
+  right: 17vw;
+  padding: 100px 140px;
+  background-color: transparent;
+  color:transparent;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 60;
+  display: none;
+  transition: color 0.3s ease;
+  font-size: 1rem;
+}
+#goTentBtn::after {
+  content: '進入帳篷';
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: black;
+  background: rgba(255,255,255,0.8);
+  padding: 3px 6px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  opacity: 0;
+  white-space: nowrap;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+#goTentBtn:hover::after { opacity: 1; }
+
+
+/* 🔹 返回營地按鈕 */
+#returnCampBtn {
+  position: fixed;
+  bottom: 12vh;
+  right: 5vw;
+  padding: 10px 20px;
+  background-color: #ff634742;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  z-index: 60;
+  display: none;
+  transition: opacity 0.5s ease;
+}
+
+/* 帳篷容器 */
+
+#tentContainer{
+  position: fixed;
+  inset: 0;
+  background-color: #000;
+  background-image: url('img/tent_inside.png');
+  background-size: cover;
+  background-position: center;
+  display: none;
+  z-index: 40;
+  opacity: 0;
+  transition: opacity 1s ease;
+
+}
+#tentContainer.show{
+    display: block;
+    opacity: 1;
+}
+
+/* === RWD 補強 === */
+@media (max-width: 768px) { .fire-container { width: 50vw; bottom: 6vh; } }
+@media (max-width: 480px) { 
+  .fire-container { width: 65vw; }
+  #fireDialog { top: -50px; right: 0; }
+}
