@@ -104,7 +104,7 @@ setInterval(() => {
   if(currentScene === "camp" || currentScene === "tent") currentCampIndex = (currentCampIndex + 1) % campBackgrounds.length;
   else if(currentScene === "river") currentRiverIndex = (currentRiverIndex + 1) % riverBackgrounds.length;
   updateBackground();
-}, 5000);
+}, 60000);
 
 // ===========================
 // 🔹 背景更新函式
@@ -252,3 +252,4 @@ goTentBtn.addEventListener("click", goToTent);
 // 🔹 初始化背景
 // ===========================
 updateBackground();
+
